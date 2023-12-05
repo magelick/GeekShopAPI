@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  # Основной контейнер
+  backend:
+    # На основе чего собирается
+    build:
+      # Все что есть в ...
+      context: .
+      # ...Dockerfile
+      dockerfile: Dockerfile
+    # Имя контейнера
+    container_name: "geek_shop-backend"
+    # Порты (внешний:внутрений)
+    ports:
+      - "8001:8000"
+    # Всегда переподнимать контейнер в случае ошибки
+    restart: always
+    # Команда для запуска контейнера
+    command: "uvicorn app:app --reload --host 0.0.0.0"
+    # Все изменения будут сохраняться и в рабочей папке контейенра, и в рабочей директории проекта одновременно
+    volumes:
+      - .:/app
+    # Переменные окружения
+    environment:
+      - POSTGRES_DB=video_game_shop
+      - POSTGRES_USER=admin1
+      - POSTGRES_PASSWORD=qwerty
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=db
+    # От каких контейнеров зависит основной контейнер
+    depends_on:
+      - db
+
+  # Контейнер БД
+  db:
+    # Образ, на основе которого будет собран данный контейнер
+    image: postgres:15.3-alpine
+    # Имя контейнера
+    container_name: "geek_shop-db"
+    # Имя хоста
+    hostname: db
+    # Всегда переподнимать контейнер в случае ошибки
+    restart: always
+    # Все изменения будут сохраняться и в рабочей папке контейенра, и в рабочей директории проекта одновременно
+    volumes:
+      - .:/data/db/var/lib/postgresql/data
+    # Переменные окружения
+    environment:
+      - POSTGRES_DB=geek_shop
+      - POSTGRES_USER=admin1
+      - POSTGRES_PASSWORD=qwerty
+      - POSTGRES_HOST_AUTH_METHOD=trust
