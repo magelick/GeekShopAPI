@@ -24,7 +24,6 @@ services:
     # Переменные окружения
     environment:
       - DATABASE_URL=postgresql://admin1:qwerty@0.0.0.0:5432/geek_shop
-      - SECRET_STR=3da212113e5b4a9e7fb5b813de4ca68504fa38a277b640ec4bec271a99bf2fbe
     # От каких контейнеров зависит основной контейнер
     depends_on:
       - db

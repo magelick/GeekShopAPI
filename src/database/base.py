@@ -1,19 +1,16 @@
 from sqlalchemy import Column, INT, create_engine
 from sqlalchemy.orm import DeclarativeBase, declared_attr, sessionmaker
-from src.types.settings import Settings
+from src.settings import SETTINGS
 
 
 class Base(DeclarativeBase):
     """
-    Базовая модель для всех других моеделей БД
+    Базовая модель для всех других моделей БД
     """
     # ID таблицы
-    id = Column(
-        INT,
-        primary_key=True
-    )
+    id = Column(INT, primary_key=True)
 
-    engine = create_engine(url=Settings.DATABASE_URL.unicode_string())
+    engine = create_engine(url=SETTINGS.DATABASE_URL.unicode_string())
     session = sessionmaker(bind=engine)
 
     @declared_attr

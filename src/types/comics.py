@@ -36,8 +36,8 @@ class ComicsBasic(DTO):
     # Цена комикса
     price: decimal = Field(
         default=...,
-        max_digits=4,
-        decimal_places=2,
+        # max_digits=4,
+        # decimal_places=2,
         title="Цена комикса",
         description="Цена конкретного комикса"
     )

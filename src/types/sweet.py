@@ -23,8 +23,8 @@ class SweetBasic(DTO):
     # Цена сладости
     price: decimal = Field(
         default=...,
-        max_digits=4,
-        decimal_places=2,
+        # max_digits=4,
+        # decimal_places=2,
         title="Цена сладости",
         description="Цена конкретной сладости"
     )
