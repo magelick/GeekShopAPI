@@ -5,20 +5,6 @@ from sqlalchemy import Column, CHAR, VARCHAR, CheckConstraint, SMALLINT, Foreign
 from sqlalchemy.orm import relationship
 from ulid import new
 
-comic_author_association = Table(
-    'comic_author_association',
-    Base.metadata,
-    Column('comic_id', SMALLINT, ForeignKey('comics.id')),
-    Column('author_id', SMALLINT, ForeignKey('authors.id'))
-)
-
-comic_characters_association = Table(
-    'comic_author_association',
-    Base.metadata,
-    Column('comic_id', SMALLINT, ForeignKey('comics.id')),
-    Column('characters_id', SMALLINT, ForeignKey('character.id'))
-)
-
 
 class User(Base):
     """
@@ -28,7 +14,7 @@ class User(Base):
         CheckConstraint('char_length(name) >= 4')
     }
 
-    id = Column(CHAR(26), primary_key=True, default=lambda: new().str,)
+    id = Column(CHAR(26), primary_key=True, default=lambda: new().str, )
     name = Column(VARCHAR(length=64), nullable=False)
     email = Column(VARCHAR(length=128), nullable=False, unique=True)
     password = Column(VARCHAR(length=128), nullable=False)
@@ -82,7 +68,7 @@ class Character(Base):
     devices = relationship(argument="Device", back_populates="character")
     sweets = relationship(argument="Sweet", back_populates="character")
     toys = relationship(argument="Toy", back_populates="universe")
-    comics = relationship(argument="Comics", secondary=comic_characters_association, back_populates="characters")
+    comics = relationship(argument="Comics", secondary="ComicsCharacters", back_populates="characters")
 
     def __repr__(self):
         return f"{self.name}"
@@ -105,8 +91,8 @@ class Comics(Base):
     date_created = Column(datetime.year, nullable=False)
     price = Column(DECIMAL, nullable=False)
     country = Column(VARCHAR(length=64), nullable=False)
-    authors = relationship("Author", secondary=comic_author_association, back_populates="comics")
-    characters = relationship(argument="Character", secondary=comic_characters_association, back_populates="comics")
+    authors = relationship("Author", secondary="ComicsAuthors", back_populates="comics")
+    characters = relationship(argument="Character", secondary="ComicsCharacters", back_populates="comics")
 
     def __repr__(self):
         return f"{self.title}"
@@ -194,7 +180,27 @@ class Author(Base):
     surname = Column(VARCHAR(length=64), nullable=False, unique=True)
     birthday = Column(datetime, nullable=False)
     characters = relationship(argument="Character", back_populates="author")
-    comics = relationship("Comics", secondary=comic_author_association, back_populates="authors")
+    comics = relationship("Comics", secondary="ComicsAuthors", back_populates="authors")
 
     def __repr__(self):
         return f"{self.name}"
+
+
+class ComicsAuthors(Base):
+    """
+    Промежуточная таблица между моделями комикса и автора
+    """
+    comics_id = Column(SMALLINT, ForeignKey("comics.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
+                       index=True)
+    author_id = Column(SMALLINT, ForeignKey("author,id", ondelete="NO ACTION"), primary_key=True, nullable=False,
+                       index=True)
+
+
+class ComicsCharacters(Base):
+    """
+    Промежуточная таблица между моделями комикса и персонажа
+    """
+    comics_id = Column(SMALLINT, ForeignKey("comics.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
+                       index=True)
+    character_id = Column(SMALLINT, ForeignKey("character.id"), onupdate="NO ACTION", primary_key=True, nullable=False,
+                          index=True)
