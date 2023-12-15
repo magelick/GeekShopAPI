@@ -2,7 +2,10 @@ from datetime import datetime
 import decimal
 from typing import List, Self
 
-from pydantic import Field, PositiveInt, model_validator
+from sqlalchemy import select
+
+from src.database.models import Comics
+from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
 
 from .base import DTO
@@ -69,6 +72,24 @@ class ComicsAddForm(ComicsBasic):
     Схема добавления конкретного комикса
     """
     ...
+
+    @field_validator("title", mode="after")
+    def title_validator(cls, title: str) -> str:
+        """
+        Валидатор
+        :param title:
+        :return:
+        """
+        #
+        with Comics.session() as session:
+            #
+            comics = session.scalar(select(Comics).filter_by(title=title))
+            #
+            if comics is not None:
+                #
+                raise ValueError("Такой комикс уже существует")
+            #
+            return title
 
 
 class ComicsDetail(ComicsBasic):

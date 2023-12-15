@@ -1,7 +1,10 @@
 import decimal
 from typing import Self
 
-from pydantic import Field, PositiveInt, model_validator
+from sqlalchemy import select
+
+from src.database.models import Device
+from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
 
 from .base import DTO
@@ -55,6 +58,24 @@ class DeviceAddFrom(DeviceBasic):
     Схема добавления конкретного девайса
     """
     ...
+
+    @field_validator("title", mode="after")
+    def title_validator(self, title: str) -> str:
+        """
+        Валидатор названия девайса
+        :param title:
+        :return:
+        """
+        # Открываем сессию
+        with Device.session() as session:
+            # Достаём девайс по названию
+            device = session.scalar(select(Device).filter_by(title=title))
+            # Если девайс найден
+            if device is not None:
+                # Выдаём ошибку
+                raise ValueError("Такой девайс уже существует")
+            # В другом случае возвращаем валидные значения
+            return title
 
 
 class DeviceDetail(DeviceBasic):

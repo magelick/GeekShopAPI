@@ -2,8 +2,10 @@ from datetime import datetime
 from typing import Self
 
 from slugify import slugify
-from ulid import new
-from pydantic import Field, model_validator, PositiveInt
+from sqlalchemy import select
+
+from src.database.models import Character
+from pydantic import Field, model_validator, PositiveInt, field_validator
 from .base import DTO
 from .custom_types import AlphaStr
 
@@ -63,6 +65,24 @@ class CharacterAddForm(CharacterBasic):
     Схема добавления конкретного персонажа
     """
     ...
+
+    @field_validator("name", mode="After")
+    def name_validator(cls, name: str) -> str:
+        """
+        Валидатор имени персонажа
+        :param name:
+        :return:
+        """
+        # Открываем сессию
+        with Character.session() as session:
+            # Достаём пресонажа по имени
+            character = session.scalar(select(Character).filter_by(name=name))
+            # Если персонаж найден
+            if character is not None:
+                # Выдаём ошибку
+                raise ValueError("Такой персонаж уже сущетсвует")
+            # В другом случае возвращаем валидные данные
+            return name
 
 
 class CharacterDetail(CharacterBasic):

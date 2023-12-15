@@ -12,7 +12,7 @@ class User(Base):
         CheckConstraint('char_length(name) >= 4'),
     )
 
-    id = Column(CHAR(26), primary_key=True, default=lambda: new().str,)
+    id = Column(CHAR(26), primary_key=True, default=lambda: new().str, )
     name = Column(VARCHAR(length=64), nullable=False)
     email = Column(VARCHAR(length=128), nullable=False, unique=True)
     password = Column(VARCHAR(length=128), nullable=False)
@@ -42,6 +42,28 @@ class Universe(Base):
         return f"{self.title}"
 
 
+class Author(Base):
+    """
+    Модель автора в БД
+    """
+    __table_args__ = (
+        CheckConstraint('char_length(slug) >= 4'),
+        CheckConstraint('char_length(name) >= 4'),
+        CheckConstraint('char_length(surname) >= 4'),
+    )
+
+    id = Column(SMALLINT, primary_key=True)
+    slug = Column(VARCHAR(length=128), nullable=False, unique=True)
+    name = Column(VARCHAR(length=64), nullable=False, unique=True)
+    surname = Column(VARCHAR(length=64), nullable=False, unique=True)
+    birthday = Column(DATETIME, nullable=False)
+    characters = relationship(argument="Character", back_populates="author")
+    comics = relationship("Comics", secondary="ComicsAuthors", back_populates="authors")
+
+    def __repr__(self):
+        return f"{self.name}"
+
+
 class Character(Base):
     """
     Модель персонажа в БД
@@ -61,7 +83,7 @@ class Character(Base):
     power = Column(VARCHAR(length=128), nullable=False)
     universe_id = Column(SMALLINT, ForeignKey(column="universe.id", ondelete="CASCADE"), nullable=False, index=True),
     universe = relationship(argument="Universe", back_populates="characters")
-    author_id = Column(SMALLINT, ForeignKey(column="Author", ondelete="CASCADE"), nullable=False, index=True)
+    author_id = Column(SMALLINT, ForeignKey('author.id', ondelete="CASCADE"), nullable=False, index=True)
     author = relationship(argument="Author", back_populates="characters")
     devices = relationship(argument="Device", back_populates="character")
     sweets = relationship(argument="Sweet", back_populates="character")
@@ -163,35 +185,13 @@ class Toy(Base):
     character = relationship(argument="Character", back_populates="toys")
 
 
-class Author(Base):
-    """
-    Модель автора в БД
-    """
-    __table_args__ = (
-        CheckConstraint('char_length(slug) >= 4'),
-        CheckConstraint('char_length(name) >= 4'),
-        CheckConstraint('char_length(surname) >= 4'),
-    )
-
-    id = Column(SMALLINT, primary_key=True)
-    slug = Column(VARCHAR(length=128), nullable=False, unique=True)
-    name = Column(VARCHAR(length=64), nullable=False, unique=True)
-    surname = Column(VARCHAR(length=64), nullable=False, unique=True)
-    birthday = Column(DATETIME, nullable=False)
-    characters = relationship(argument="Character", back_populates="author")
-    comics = relationship("Comics", secondary="ComicsAuthors", back_populates="authors")
-
-    def __repr__(self):
-        return f"{self.name}"
-
-
 class ComicsAuthors(Base):
     """
     Промежуточная таблица между моделями комикса и автора
     """
     comics_id = Column(SMALLINT, ForeignKey("comics.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
                        index=True)
-    author_id = Column(SMALLINT, ForeignKey("author,id", ondelete="NO ACTION"), primary_key=True, nullable=False,
+    author_id = Column(SMALLINT, ForeignKey("author.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
                        index=True)
 
 

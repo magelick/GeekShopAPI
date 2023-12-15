@@ -1,11 +1,13 @@
 from datetime import datetime
 from typing import List, Self
 
-from pydantic import Field, PositiveInt, model_validator
+from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
+from sqlalchemy import select
 
 from .base import DTO
 from .custom_types import AlphaStr
+from src.database.models import Author
 
 
 class AuthorBasic(DTO):
@@ -47,6 +49,24 @@ class AuthorAddForm(AuthorBasic):
     Схема добоваления конкретного автора
     """
     ...
+
+    @field_validator("", mode="after")
+    def name_validator(cls, name: str) -> str:
+        """
+        Валидатор имени автора
+        :param name:
+        :return:
+        """
+        # Открываем сессию
+        with Author.session() as session:
+            # Достаём автора по имени
+            author = session.scalar(select(Author).filter_by(name=name))
+            # Если автор найден
+            if author is not None:
+                # Выдаём ошибку
+                raise ValueError("Такой автор уже существует")
+            # В другом случае возвращаем валлидные данные
+            return name
 
 
 class AuthorDetail(AuthorBasic):

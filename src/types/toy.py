@@ -1,11 +1,13 @@
 import decimal
 from typing import Self
 
-from pydantic import Field, model_validator, PositiveInt
+from pydantic import Field, model_validator, PositiveInt, field_validator
 from slugify import slugify
+from sqlalchemy import select
 
 from .base import DTO
 from .custom_types import AlphaStr
+from src.database.models import Toy
 
 
 class ToyBasic(DTO):
@@ -61,6 +63,24 @@ class ToyAddForm(ToyBasic):
     Схема добавления конкретной игрушки
     """
     ...
+
+    @field_validator("title", mode="after")
+    def title_validator(cls, title: str) -> str:
+        """
+        Валидатор названия игрушки
+        :param title:
+        :return:
+        """
+        # Открываем сессию
+        with Toy.session() as session:
+            # Достаём игрушку по названию
+            toy = session.scalar(select(Toy).filter_by(title=title))
+            # Если игрушка найдена
+            if toy is not None:
+                # Выдаём ошибку
+                raise ValueError("Такая игрушка уже существует")
+            # В другом случае возвращаем валидные данные
+            return title
 
 
 class ToyDetail(ToyBasic):

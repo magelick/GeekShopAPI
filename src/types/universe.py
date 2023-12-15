@@ -1,11 +1,13 @@
 from datetime import datetime
 from typing import Self
 
-from pydantic import Field, PositiveInt, model_validator
+from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
+from sqlalchemy import select
 
 from .base import DTO
 from .custom_types import AlphaStr
+from src.database.models import Universe
 
 
 class UniverseBasic(DTO):
@@ -33,6 +35,25 @@ class UniverseAddForm(UniverseBasic):
     Схема добавления конкретной вселенной персонажей
     """
     ...
+
+    @field_validator("title", mode="after")
+    def title_validator(cls, title: str) -> str:
+        """
+        Валидатор названия вселенной
+        :param title:
+        :return:
+        """
+        # Открываем сессию
+        with Universe.session() as session:
+            # Достаём вселенную по названию
+            universe = session.scalar(select(Universe).filter_by(title=title))
+            # Если вселенная надена
+            if universe is not None:
+                # Выдаём ошибку
+                raise ValueError("Такая вселенная уже сущетсвует")
+
+            # В другом случае возвращаем валлидные данные
+            return title
 
 
 class UniverseDetail(UniverseBasic):

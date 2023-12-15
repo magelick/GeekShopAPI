@@ -15,4 +15,4 @@ class Base(DeclarativeBase):
 
     @declared_attr
     def __tablename__(cls) -> str:
-        return ''.join(f'_{i.lower}' if i.isupper() else i for i in cls.__name__).strip('')
+        return ''.join(f'_{i.lower()}' if i.isupper() else i for i in cls.__name__).strip('_')

@@ -1,11 +1,13 @@
 import decimal
 from typing import Self
 
-from pydantic import Field, model_validator, PositiveInt
+from pydantic import Field, model_validator, PositiveInt, field_validator
 from slugify import slugify
+from sqlalchemy import select
 
 from .base import DTO
 from .custom_types import AlphaStr
+from src.database.models import Sweet
 
 
 class SweetBasic(DTO):
@@ -47,6 +49,24 @@ class SweetAddForm(SweetBasic):
     Схема добавления конкретной сладости
     """
     ...
+
+    @field_validator("title", mode="after")
+    def title_validator(cls, title: str) -> str:
+        """
+        Валидатор названия сладости
+        :param title:
+        :return:
+        """
+        # Открываем сессию
+        with Sweet.session() as session:
+            # Достаём сладость по названию
+            sweet = session.scalar(select(Sweet).filter_by(title=title))
+            # Если сладость найдена
+            if sweet is not None:
+                # Выдаём ошибку
+                raise ValueError("Такая сладость уже существует")
+            # В другом случае возвращаем валидные данные
+            return title
 
 
 class SweetDetail(SweetBasic):

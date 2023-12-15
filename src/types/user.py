@@ -1,9 +1,11 @@
 from typing import Self
 
-from pydantic import Field, EmailStr, model_validator
+from pydantic import Field, EmailStr, model_validator, field_validator
+from sqlalchemy import select
 from ulid import new
 
 from .base import DTO
+from src.database.models import User
 from .custom_types import PasswordStr, AlphaStr
 
 
@@ -32,6 +34,24 @@ class UserLoginForm(UserBasic):
     """
     ...
 
+    @field_validator("email", mode="after")
+    def email_validator(cls, email: str) -> str:
+        """
+        Валидатор адреса элетронной почты
+        :param email:
+        :return:
+        """
+        # Открываем сессию
+        with User.session() as session:
+            # Достаём пользователя по адрему элетронной почты
+            user = session.scalar(select(User).filter_by(email=email))
+            # Если пользователь не найден
+            if user is None:
+                # Выдаём ошибку
+                raise ValueError("Пользователя с такой элетронной почтой не существует")
+            # В другом случае возвращаем валидные данные
+            return email
+
 
 class UserRegisterForm(UserBasic):
     """
@@ -51,6 +71,15 @@ class UserRegisterForm(UserBasic):
         title="Потверждение пароля",
         description="Потверждение пароля кокнретного пользователя"
     )
+
+    @field_validator("email", mode="after")
+    def email_validator(cls, email: str) -> str:
+        with User.session() as session:
+            user = session.scalar(select(User).filter_by(email=email))
+            if user is not None:
+                raise ValueError("Пользователь с такой элетронной почтой уже существует")
+
+            return email
 
     @model_validator(mode="after")
     def validator(self) -> Self:
