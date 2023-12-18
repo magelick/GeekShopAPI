@@ -23,7 +23,7 @@ services:
       - .:/app
     # Переменные окружения
     environment:
-      - DATABASE_URL=postgresql://admin1:qwerty@0.0.0.0:5432/geek_shop
+      - DATABASE_URL=postgresql://admin1:qwerty@db:5432/geek_shop
     # От каких контейнеров зависит основной контейнер
     depends_on:
       - db
@@ -34,8 +34,6 @@ services:
     image: postgres:15.3-alpine
     # Имя контейнера
     container_name: "geek_shop-db"
-    # Имя хоста
-    hostname: db
     # Порты
     ports:
       - "5432:5432"

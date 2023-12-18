@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Self
+import datetime
+from typing import Self, Optional
 
 from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
@@ -7,7 +7,6 @@ from sqlalchemy import select
 
 from .base import DTO
 from .custom_types import AlphaStr
-from src.database.models import Universe
 
 
 class UniverseBasic(DTO):
@@ -17,13 +16,13 @@ class UniverseBasic(DTO):
     # Название вселенной
     title: AlphaStr = Field(
         default=...,
-        min_length=4,
+        min_length=2,
         max_length=64,
         title="Название вселенной",
         description="Название вселенной персонажей"
     )
     # Дата создания
-    date_created: datetime.year = Field(
+    date_created: datetime.date = Field(
         default=...,
         title="Дата создания",
         description="Дата создания конкретной вселенной"
@@ -43,6 +42,7 @@ class UniverseAddForm(UniverseBasic):
         :param title:
         :return:
         """
+        from src.database.models import Universe
         # Открываем сессию
         with Universe.session() as session:
             # Достаём вселенную по названию
@@ -56,18 +56,25 @@ class UniverseAddForm(UniverseBasic):
             return title
 
 
+class UniverseUpdateForm(UniverseBasic):
+    """
+
+    """
+    ...
+
+
 class UniverseDetail(UniverseBasic):
     """
     Схема представления конкретной вселенной персонажей
     """
     # ID вселенной
-    id: PositiveInt = Field(
+    id: Optional[PositiveInt] = Field(
         default=None,
         title="ID вселенной",
         description="ID конкретной вселенной"
     )
     # Слаг вселенной
-    slug: str = Field(
+    slug: Optional[str] = Field(
         default=None,
         min_length=4,
         max_length=128,
@@ -84,7 +91,7 @@ class UniverseDetail(UniverseBasic):
         # Если слаг не передан
         if self.slug is None:
             # Генерируем слаг на основании названия и даты создания конкретной вселенной
-            self.slug = slugify(f"{self.title}-{self.date_created.timestamp()}")
+            self.slug = slugify(f"{self.title}-{self.date_created}")
 
         # В другом случае возвращаем валидные данные
-        return Self
+        return self

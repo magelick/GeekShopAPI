@@ -1,9 +1,9 @@
-import decimal
-from typing import Self
+from decimal import Decimal
+from typing import Self, Optional
 
 from sqlalchemy import select
 
-from src.database.models import Device
+
 from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
 
@@ -32,10 +32,10 @@ class DeviceBasic(DTO):
         description="Тип конкретного девайса"
     )
     # Цена девайса
-    price: decimal = Field(
+    price: Decimal = Field(
         default=...,
-        # max_digits=4,
-        # decimal_places=2,
+        max_digits=4,
+        decimal_places=2,
         title="Цена девайса",
         description="Цена конкретного девайса"
     )
@@ -60,12 +60,13 @@ class DeviceAddFrom(DeviceBasic):
     ...
 
     @field_validator("title", mode="after")
-    def title_validator(self, title: str) -> str:
+    def title_validator(cls, title: str) -> str:
         """
         Валидатор названия девайса
         :param title:
         :return:
         """
+        from src.database.models import Device
         # Открываем сессию
         with Device.session() as session:
             # Достаём девайс по названию
@@ -83,13 +84,13 @@ class DeviceDetail(DeviceBasic):
     Схема представления данных о конкретном девайсе
     """
     # ID девайса
-    id: PositiveInt = Field(
+    id: Optional[PositiveInt] = Field(
         default=None,
         title="ID девайса",
         description="ID конкретного девайса"
     )
     # Слаг девайса
-    slug: str = Field(
+    slug: Optional[str] = Field(
         default=None,
         min_length=4,
         max_length=128,
@@ -109,4 +110,4 @@ class DeviceDetail(DeviceBasic):
             self.slug = slugify(f"{self.title}-{self.type_of_device}-{self.price}")
 
         # В другом случае возвращаем валидные данные
-        return Self
+        return self

@@ -1,4 +1,4 @@
-import decimal
+from decimal import Decimal
 from typing import Self
 
 from pydantic import Field, model_validator, PositiveInt, field_validator
@@ -7,7 +7,6 @@ from sqlalchemy import select
 
 from .base import DTO
 from .custom_types import AlphaStr
-from src.database.models import Toy
 
 
 class ToyBasic(DTO):
@@ -37,10 +36,10 @@ class ToyBasic(DTO):
         description="Тип кокнретной игрушки"
     )
     # Цена игрушки
-    price: decimal = Field(
+    price: Decimal = Field(
         default=...,
-        # max_digits=4,
-        # decimal_places=2,
+        max_digits=4,
+        decimal_places=2,
         title="Цена игрушки",
         description="Цена конкретной игрушки"
     )
@@ -71,6 +70,7 @@ class ToyAddForm(ToyBasic):
         :param title:
         :return:
         """
+        from src.database.models import Toy
         # Открываем сессию
         with Toy.session() as session:
             # Достаём игрушку по названию

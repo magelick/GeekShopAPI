@@ -1,5 +1,5 @@
-import decimal
-from typing import Self
+from decimal import Decimal
+from typing import Self, Optional
 
 from pydantic import Field, model_validator, PositiveInt, field_validator
 from slugify import slugify
@@ -7,7 +7,6 @@ from sqlalchemy import select
 
 from .base import DTO
 from .custom_types import AlphaStr
-from src.database.models import Sweet
 
 
 class SweetBasic(DTO):
@@ -23,10 +22,10 @@ class SweetBasic(DTO):
         description="Название конкретной сладости"
     )
     # Цена сладости
-    price: decimal = Field(
+    price: Decimal = Field(
         default=...,
-        # max_digits=4,
-        # decimal_places=2,
+        max_digits=4,
+        decimal_places=2,
         title="Цена сладости",
         description="Цена конкретной сладости"
     )
@@ -57,6 +56,7 @@ class SweetAddForm(SweetBasic):
         :param title:
         :return:
         """
+        from src.database.models import Sweet
         # Открываем сессию
         with Sweet.session() as session:
             # Достаём сладость по названию
@@ -74,13 +74,13 @@ class SweetDetail(SweetBasic):
     Схема представления данных о конкретной сладости
     """
     # ID сладости
-    id: PositiveInt = Field(
+    id: Optional[PositiveInt] = Field(
         default=None,
         title="ID девайса",
         description="ID конкретного девайса"
     )
     # Слаг сладости
-    slug: str = Field(
+    slug: Optional[str] = Field(
         default=None,
         min_length=4,
         max_length=128,
@@ -100,4 +100,4 @@ class SweetDetail(SweetBasic):
             self.slug = slugify(f"{self.title}-{self.weight}-{self.price}")
 
         # В другом случае возвращаем валидные данные
-        return Self
+        return self

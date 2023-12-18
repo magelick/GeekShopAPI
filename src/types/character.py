@@ -1,11 +1,12 @@
-from datetime import datetime
-from typing import Self
+import datetime
+from typing import Self, Optional
 
 from slugify import slugify
 from sqlalchemy import select
 
-from src.database.models import Character
 from pydantic import Field, model_validator, PositiveInt, field_validator
+
+
 from .base import DTO
 from .custom_types import AlphaStr
 
@@ -24,7 +25,7 @@ class CharacterBasic(DTO):
         examples=["Железный человек", "Человек Паук", "Бэтмен"]
     )
     # Дата создания
-    date_created: datetime.year = Field(
+    date_created: datetime.date = Field(
         default=...,
         title="Дата создания",
         description="Дата создания конкретного персонажа",
@@ -66,7 +67,7 @@ class CharacterAddForm(CharacterBasic):
     """
     ...
 
-    @field_validator("name", mode="After")
+    @field_validator("name", mode="after")
     def name_validator(cls, name: str) -> str:
         """
         Валидатор имени персонажа
@@ -74,6 +75,7 @@ class CharacterAddForm(CharacterBasic):
         :return:
         """
         # Открываем сессию
+        from src.database.models import Character
         with Character.session() as session:
             # Достаём пресонажа по имени
             character = session.scalar(select(Character).filter_by(name=name))
@@ -90,13 +92,13 @@ class CharacterDetail(CharacterBasic):
     Схема представления данных о конкретном персонаже
     """
     # ID персонажа
-    id: PositiveInt = Field(
+    id: Optional[PositiveInt] = Field(
         default=None,
         title="ID персонажа",
         description="ID конкретного персонажа"
     )
     # Слаг персонажа
-    slug: str = Field(
+    slug: Optional[str] = Field(
         default=None,
         min_length=4,
         max_length=128,
@@ -113,7 +115,7 @@ class CharacterDetail(CharacterBasic):
         # Если слаг не передан
         if self.slug is None:
             # Генерируем слаг на основании имени конкретного персонажа
-            self.slug = slugify(f"{self.name}-{self.date_created.timestamp()}")
+            self.slug = slugify(f"{self.name}-{self.date_created}")
 
         # В другом случае возвращаем валидные данные
-        return Self
+        return self

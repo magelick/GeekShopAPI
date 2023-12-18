@@ -1,10 +1,9 @@
-from datetime import datetime
-import decimal
-from typing import List, Self
+import datetime
+from decimal import Decimal
+from typing import Optional, Self, List
 
 from sqlalchemy import select
 
-from src.database.models import Comics
 from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
 
@@ -31,16 +30,16 @@ class ComicsBasic(DTO):
         description="Том конкретного комикса"
     )
     # Дата создания комикса
-    date_created: datetime = Field(
+    date_created: datetime.date = Field(
         default=...,
         title="Дата создания комикса",
         description="Дата создания конкретного комикса",
     )
     # Цена комикса
-    price: decimal = Field(
+    price: Decimal = Field(
         default=...,
-        # max_digits=4,
-        # decimal_places=2,
+        max_digits=4,
+        decimal_places=2,
         title="Цена комикса",
         description="Цена конкретного комикса"
     )
@@ -53,18 +52,18 @@ class ComicsBasic(DTO):
         description="Страна выпуска конкретного комикса",
         examples=["Америка", "Германия", "Норвегия"]
     )
-    # Персонажи комикса
-    characters: List[PositiveInt] = Field(
-        default=...,
-        title="Персонажи комикса",
-        description="Персонажи конкретного комикса"
-    )
-    # Авторы комикса
-    authors: List[PositiveInt] = Field(
-        default=...,
-        title="Авторы комикса",
-        description="Авторы конкретного комикса"
-    )
+    # # Персонажи комикса
+    # characters: List[PositiveInt] = Field(
+    #     default=...,
+    #     title="Персонажи комикса",
+    #     description="Персонажи конкретного комикса"
+    # )
+    # # Авторы комикса
+    # authors: List[PositiveInt] = Field(
+    #     default=...,
+    #     title="Авторы комикса",
+    #     description="Авторы конкретного комикса"
+    # )
 
 
 class ComicsAddForm(ComicsBasic):
@@ -76,19 +75,20 @@ class ComicsAddForm(ComicsBasic):
     @field_validator("title", mode="after")
     def title_validator(cls, title: str) -> str:
         """
-        Валидатор
+        Валидатор названия комикса
         :param title:
         :return:
         """
-        #
+        from src.database.models import Comics
+        # Открываем сессию
         with Comics.session() as session:
-            #
+            # Достаём комикс по названию
             comics = session.scalar(select(Comics).filter_by(title=title))
-            #
+            # Если комикс найден
             if comics is not None:
-                #
+                # Выдаём ошибку
                 raise ValueError("Такой комикс уже существует")
-            #
+            # В другом случае возвращаем валидные данные
             return title
 
 
@@ -97,13 +97,13 @@ class ComicsDetail(ComicsBasic):
     Схема представления данных конкретного комикса
     """
     # ID комикса
-    id: PositiveInt = Field(
+    id: Optional[PositiveInt] = Field(
         default=None,
         title="ID комикса",
         description="ID конкретного комикса"
     )
     # Слаг комикса
-    slug: str = Field(
+    slug: Optional[str] = Field(
         default=None,
         min_length=4,
         max_length=128,
@@ -120,7 +120,7 @@ class ComicsDetail(ComicsBasic):
         # Если слаг не передан
         if self.slug is None:
             # Генерируем слаг на основании названия, тома и даты создания конкретного комикса
-            self.slug = slugify(f"{self.title}-{self.volume}-{self.date_created.timestamp()}")
+            self.slug = slugify(f"{self.title}-{self.volume}-{self.date_created}")
 
         # В другом случае возвращаем валидные данные
-        return Self
+        return self

@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import List, Self
+import datetime
+from typing import List, Self, Optional
 
 from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
@@ -7,7 +7,6 @@ from sqlalchemy import select
 
 from .base import DTO
 from .custom_types import AlphaStr
-from src.database.models import Author
 
 
 class AuthorBasic(DTO):
@@ -31,7 +30,7 @@ class AuthorBasic(DTO):
         description="Фамилия конкретного автора"
     )
     # Дата рождения автора
-    birthday: datetime = Field(
+    birthday: datetime.date = Field(
         default=...,
         title="Дата рождения автора",
         description="Дата рождения конкретного автора"
@@ -50,13 +49,14 @@ class AuthorAddForm(AuthorBasic):
     """
     ...
 
-    @field_validator("", mode="after")
+    @field_validator("name", mode="after")
     def name_validator(cls, name: str) -> str:
         """
         Валидатор имени автора
         :param name:
         :return:
         """
+        from src.database.models import Author
         # Открываем сессию
         with Author.session() as session:
             # Достаём автора по имени
@@ -74,13 +74,13 @@ class AuthorDetail(AuthorBasic):
     Схема представления данных конкретного автора
     """
     # ID автора
-    id: PositiveInt = Field(
+    id: Optional[PositiveInt] = Field(
         default=None,
         title="ID автора",
         description="ID конкретного автора"
     )
     # Слаг автора
-    slug: str = Field(
+    slug: Optional[str] = Field(
         default=None,
         min_length=4,
         max_length=128,
@@ -97,7 +97,7 @@ class AuthorDetail(AuthorBasic):
         # Если слаг не передан
         if self.slug is None:
             # Генерируем слаг на основании имени, фамилии и даты рождения конкретного автора
-            self.slug = slugify(f"{self.name}-{self.surname}-{self.birthday.timestamp()}")
+            self.slug = slugify(f"{self.name}-{self.surname}-{self.birthday}")
 
         # В другом случае возвращаем валидные данные
-        return Self
+        return self

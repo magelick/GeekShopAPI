@@ -5,7 +5,6 @@ from sqlalchemy import select
 from ulid import new
 
 from .base import DTO
-from src.database.models import User
 from .custom_types import PasswordStr, AlphaStr
 
 
@@ -41,6 +40,7 @@ class UserLoginForm(UserBasic):
         :param email:
         :return:
         """
+        from src.database.models import User
         # Открываем сессию
         with User.session() as session:
             # Достаём пользователя по адрему элетронной почты
@@ -74,11 +74,21 @@ class UserRegisterForm(UserBasic):
 
     @field_validator("email", mode="after")
     def email_validator(cls, email: str) -> str:
+        """
+        Валидатор адреса элетронной почты
+        :param email:
+        :return:
+        """
+        from src.database.models import User
+        # Открываем сессию
         with User.session() as session:
+            # Достаём пользователя по адрему элетронной почты
             user = session.scalar(select(User).filter_by(email=email))
+            # Если пользователь найден
             if user is not None:
-                raise ValueError("Пользователь с такой элетронной почтой уже существует")
-
+                # Выдаём ошибку
+                raise ValueError("Пользователя с такой элетронной почтой уже существует")
+            # В другом случае возвращаем валидные данные
             return email
 
     @model_validator(mode="after")
