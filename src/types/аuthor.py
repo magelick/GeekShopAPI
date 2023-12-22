@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Self, Optional
+from typing import Self, Optional
 
 from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
@@ -16,30 +16,27 @@ class AuthorBasic(DTO):
     # Имя автора
     name: AlphaStr = Field(
         default=...,
-        min_length=4,
+        min_length=2,
         max_length=64,
         title="Имя автора",
-        description="Имя конкретного автора"
+        description="Имя конкретного автора",
+        examples=["Стэн", "Джэк"]
     )
     # Фамилия автора
     surname: AlphaStr = Field(
         default=...,
-        min_length=4,
+        min_length=2,
         max_length=64,
         title="Фамилия автора",
-        description="Фамилия конкретного автора"
+        description="Фамилия конкретного автора",
+        examples=["Ли", "Кирби"]
     )
     # Дата рождения автора
     birthday: datetime.date = Field(
         default=...,
         title="Дата рождения автора",
-        description="Дата рождения конкретного автора"
-    )
-    # Комиксы автора
-    comics: List[PositiveInt] = Field(
-        default=...,
-        title="Комиксы автора",
-        description="Комиксы конкретного автора"
+        description="Дата рождения конкретного автора",
+        examples=["1999-99-99", "2020-12-31", "1234-45-67"]
     )
 
 
@@ -67,6 +64,13 @@ class AuthorAddForm(AuthorBasic):
                 raise ValueError("Такой автор уже существует")
             # В другом случае возвращаем валлидные данные
             return name
+
+
+class AuthorUpdateForm(AuthorBasic):
+    """
+    Схема обновления существующей вселенной
+    """
+    ...
 
 
 class AuthorDetail(AuthorBasic):

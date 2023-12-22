@@ -19,13 +19,15 @@ class UniverseBasic(DTO):
         min_length=2,
         max_length=64,
         title="Название вселенной",
-        description="Название вселенной персонажей"
+        description="Название вселенной персонажей",
+        examples=["Marvel", "DC"]
     )
     # Дата создания
     date_created: datetime.date = Field(
         default=...,
         title="Дата создания",
-        description="Дата создания конкретной вселенной"
+        description="Дата создания конкретной вселенной",
+        examples=["1999-99-99", "2020-12-31", "1234-45-67"]
     )
 
 
@@ -58,7 +60,7 @@ class UniverseAddForm(UniverseBasic):
 
 class UniverseUpdateForm(UniverseBasic):
     """
-
+    Схема обновления существующей вселенной
     """
     ...
 

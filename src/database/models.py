@@ -68,8 +68,8 @@ class Author(Base):
     """
     __table_args__ = (
         CheckConstraint('char_length(slug) >= 4'),
-        CheckConstraint('char_length(name) >= 4'),
-        CheckConstraint('char_length(surname) >= 4'),
+        CheckConstraint('char_length(name) >= 2'),
+        CheckConstraint('char_length(surname) >= 2'),
     )
 
     id = Column(SMALLINT, primary_key=True)

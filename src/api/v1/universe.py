@@ -1,5 +1,6 @@
 from typing import List
 
+from pydantic import PositiveInt
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from src.database.models import Universe
@@ -30,7 +31,7 @@ async def get_list_universes(session: Session = get_db_session):
     :param session:
     :return:
     """
-    # Достаём всех вселенные
+    # Достаём все вселенные
     universes = session.scalars(select(Universe).order_by(Universe.id))
     # Возвращаем их, провалидировав через схемки
     return [UniverseDetail.model_validate(obj=universe, from_attributes=True) for universe in universes]
@@ -69,7 +70,7 @@ async def add_new_universe(form: UniverseAddForm, session: Session = get_db_sess
     response_model=UniverseDetail,
     name="Получение конкретной вселенной"
 )
-async def get_universe(universe_id: int = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_universe(universe_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
     """
     Получение конкретной вселенной
     :param universe_id:
@@ -92,28 +93,31 @@ async def get_universe(universe_id: int = Path(default=..., ge=1), session: Sess
     status_code=status.HTTP_200_OK,
     name="Обновление конкретной вселенной"
 )
-async def update_universe(form: UniverseUpdateForm, universe_id: int = Path(default=..., ge=1),
+async def update_universe(form: UniverseUpdateForm, universe_id: PositiveInt = Path(default=..., ge=1),
                           session: Session = get_db_session):
     """
     Изменение конкретной вселенной
+    :param form:
     :param universe_id:
     :param session:
     :return:
     """
-    # Валидируем полученные данные
-    form_universe = UniverseDetail(**form.model_dump())
     # Достаём вселенную по её ID
     universe = session.scalar(select(Universe).filter_by(id=universe_id))
     # Если вселенная не найдена
     if universe is None:
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такой вселенной не существует")
+    # Валидируем полученные данные
+    form_universe = UniverseDetail(**form.model_dump())
     # Достаём ключи и их значения в провалидированных данных
-    for name, value in form_universe:
+    for name, value in form_universe.items():
         # Изменяем полученую по ID вселенную
         setattr(universe, name, value)
     # Сохраняем изменения в БД
     session.commit()
+    # Дописываем ID, если это необходимо
+    session.refresh(universe)
     # Возвращаем изменённую вселенную в виде основной схемы представления вселенной
     return UniverseDetail.model_validate(obj=universe, from_attributes=True)
 
@@ -123,7 +127,7 @@ async def update_universe(form: UniverseUpdateForm, universe_id: int = Path(defa
     status_code=status.HTTP_200_OK,
     name="Удаление конкретной категории"
 )
-async def delete_universe(universe_id: int = Path(default=..., ge=1), session: Session = get_db_session):
+async def delete_universe(universe_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
     """
     Удаление конкретной вселенной
     :param universe_id:
@@ -146,7 +150,7 @@ async def delete_universe(universe_id: int = Path(default=..., ge=1), session: S
     response_model=List[CharacterDetail],
     name="Получение всех персонажей конкретной вселенной"
 )
-async def get_list_character_of_universe(universe_id: int = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_list_character_of_universe(universe_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
     """
     Получение списка персонажей конкретной вселенной
     :param universe_id:
@@ -169,7 +173,7 @@ async def get_list_character_of_universe(universe_id: int = Path(default=..., ge
     response_model=List[DeviceDetail],
     name="Получение всех девайсов конкретной вселенной"
 )
-async def get_list_devices_of_universe(universe_id: int = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_list_devices_of_universe(universe_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
     """
     Получение всех девайсов конкретной вселенной
     :param universe_id:
@@ -192,9 +196,9 @@ async def get_list_devices_of_universe(universe_id: int = Path(default=..., ge=1
     response_model=List[ToyDetail],
     name="Получение всех игрушек конкретной вселенной"
 )
-async def get_list_toys_of_universe(universe_id: int = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_list_toys_of_universe(universe_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
     """
-
+    Получение списка игрущек конкретной вселенной
     :param universe_id:
     :param session:
     :return:
