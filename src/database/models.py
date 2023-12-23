@@ -30,7 +30,7 @@ class Universe(Base):
         CheckConstraint('char_length(slug) >= 4'),
     )
 
-    id = Column(SMALLINT, primary_key=True)
+    id = Column(SMALLINT, primary_key=True, nullable=False)
     slug = Column(VARCHAR(length=128), nullable=False, unique=True)
     title = Column(VARCHAR(length=64), nullable=False, unique=True)
     date_created = Column(TIMESTAMP, nullable=False, unique=True)
@@ -58,8 +58,8 @@ class ComicsCharacters(Base):
     """
     comics_id = Column(SMALLINT, ForeignKey("comics.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
                        index=True)
-    character_id = Column(SMALLINT, ForeignKey("character.id"), onupdate="NO ACTION", primary_key=True, nullable=False,
-                          index=True)
+    character_id = Column(SMALLINT, ForeignKey("character.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
+                       index=True)
 
 
 class Author(Base):
@@ -72,7 +72,7 @@ class Author(Base):
         CheckConstraint('char_length(surname) >= 2'),
     )
 
-    id = Column(SMALLINT, primary_key=True)
+    id = Column(SMALLINT, primary_key=True, nullable=False)
     slug = Column(VARCHAR(length=128), nullable=False, unique=True)
     name = Column(VARCHAR(length=64), nullable=False, unique=True)
     surname = Column(VARCHAR(length=64), nullable=False, unique=True)
@@ -95,7 +95,7 @@ class Character(Base):
         CheckConstraint('char_length(slug) >= 4')
     )
 
-    id = Column(SMALLINT, primary_key=True)
+    id = Column(SMALLINT, primary_key=True, nullable=False)
     slug = Column(VARCHAR(length=128), nullable=False, unique=True)
     name = Column(VARCHAR(length=64), nullable=False)
     date_created = Column(TIMESTAMP, nullable=False)

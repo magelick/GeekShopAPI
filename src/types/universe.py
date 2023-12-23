@@ -70,13 +70,13 @@ class UniverseDetail(UniverseBasic):
     Схема представления конкретной вселенной персонажей
     """
     # ID вселенной
-    id: Optional[PositiveInt] = Field(
+    id: Optional[PositiveInt] | None = Field(
         default=None,
         title="ID вселенной",
         description="ID конкретной вселенной"
     )
     # Слаг вселенной
-    slug: Optional[str] = Field(
+    slug: Optional[str] | None = Field(
         default=None,
         min_length=4,
         max_length=128,

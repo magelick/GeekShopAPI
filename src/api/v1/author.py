@@ -163,7 +163,7 @@ async def get_list_characters_of_author(author_id: PositiveInt = Path(default=..
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такого автора не существует")
     # Возвращаем список персонажей конкретного автора
-    return [CharacterDetail.model_validate(character, from_attributes=True) for character in author.characters]
+    return [CharacterDetail.model_validate(obj=character, from_attributes=True) for character in author.characters]
 
 
 @router.get(
@@ -186,4 +186,4 @@ async def get_list_comics_of_author(author_id: PositiveInt = Path(default=...,ge
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такого автора не существует")
     # Возвращаем список комиксов кокнретного автора
-    return [ComicsDetail.model_validate(comics, from_attributes=True) for comics in author.comics]
+    return [ComicsDetail.model_validate(obj=comics, from_attributes=True) for comics in author.comics]

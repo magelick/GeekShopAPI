@@ -1,7 +1,7 @@
 from typing import List
 
 from pydantic import PositiveInt
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 from src.database.models import Universe
 from src.dependencies import get_db_session
@@ -111,7 +111,7 @@ async def update_universe(form: UniverseUpdateForm, universe_id: PositiveInt = P
     # Валидируем полученные данные
     form_universe = UniverseDetail(**form.model_dump())
     # Достаём ключи и их значения в провалидированных данных
-    for name, value in form_universe.items():
+    for name, value in form_universe:
         # Изменяем полученую по ID вселенную
         setattr(universe, name, value)
     # Сохраняем изменения в БД
@@ -136,6 +136,10 @@ async def delete_universe(universe_id: PositiveInt = Path(default=..., ge=1), se
     """
     # Достаём вселенную по ID
     universe = session.scalar(select(Universe).filter_by(id=universe_id))
+    # Если вселенная не найдена
+    if universe is None:
+        # Выдаём ошибку
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такой вселенной не существует")
     # Удаляем выбранную вселенную
     session.delete(universe)
     # Сохраняем изменения в БД

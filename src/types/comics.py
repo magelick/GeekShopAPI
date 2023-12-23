@@ -92,6 +92,13 @@ class ComicsAddForm(ComicsBasic):
             return title
 
 
+class ComicsUpdateForm(ComicsBasic):
+    """
+    Схема обновления конкретного комикса
+    """
+    ...
+
+
 class ComicsDetail(ComicsBasic):
     """
     Схема представления данных конкретного комикса
