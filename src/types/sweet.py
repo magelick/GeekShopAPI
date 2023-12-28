@@ -69,6 +69,13 @@ class SweetAddForm(SweetBasic):
             return title
 
 
+class SweetUpdateForm(SweetBasic):
+    """
+    Схема обновления конкретной сладости
+    """
+    ...
+
+
 class SweetDetail(SweetBasic):
     """
     Схема представления данных о конкретной сладости

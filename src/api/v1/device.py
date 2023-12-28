@@ -189,5 +189,5 @@ async def get_character_of_device(device_id: PositiveInt = Path(default=..., ge=
     if device is None:
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такого девайса не существует")
-    # Возвращаем конкретного персонажа, к которой относиться конкретный девайс
+    # Возвращаем конкретного персонажа, к которому относиться конкретный девайс
     return CharacterDetail.model_validate(obj=device.character, from_attributes=True)

@@ -6,6 +6,7 @@ from .comics import router as comics_router
 from .comics_author import router as comics_author_router
 from .character import router as character_router
 from .device import router as device_router
+from .sweet import router as sweet_router
 
 # Роутер, отвечающий за ветку API версии №1
 router = APIRouter(
@@ -25,3 +26,5 @@ router.include_router(router=comics_author_router)
 router.include_router(router=character_router)
 # Подключаем роутер девайса к роутеру V1
 router.include_router(router=device_router)
+# Подклочаем роутер сладостей к роутеру V1
+router.include_router(router=sweet_router)
