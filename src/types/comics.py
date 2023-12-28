@@ -38,7 +38,7 @@ class ComicsBasic(DTO):
     # Цена комикса
     price: Decimal = Field(
         default=...,
-        max_digits=4,
+        max_digits=5,
         decimal_places=2,
         title="Цена комикса",
         description="Цена конкретного комикса"
@@ -52,18 +52,6 @@ class ComicsBasic(DTO):
         description="Страна выпуска конкретного комикса",
         examples=["Америка", "Германия", "Норвегия"]
     )
-    # # Персонажи комикса
-    # characters: List[PositiveInt] = Field(
-    #     default=...,
-    #     title="Персонажи комикса",
-    #     description="Персонажи конкретного комикса"
-    # )
-    # # Авторы комикса
-    # authors: List[PositiveInt] = Field(
-    #     default=...,
-    #     title="Авторы комикса",
-    #     description="Авторы конкретного комикса"
-    # )
 
 
 class ComicsAddForm(ComicsBasic):

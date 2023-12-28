@@ -44,7 +44,7 @@ async def get_list_comics(session: Session = get_db_session):
     response_model=ComicsDetail,
     name="Добавление нового комикса"
 )
-async def add_new_comics(form: ComicsAddForm, session: Session = get_db_session):
+async def add_new_comics(id: PositiveInt, form: ComicsAddForm, session: Session = get_db_session):
     """
     Добавление нового комикса
     :param form:
@@ -52,7 +52,7 @@ async def add_new_comics(form: ComicsAddForm, session: Session = get_db_session)
     :return:
     """
     # Создаём новый комикс,валидировав через основную схему представления комиксов
-    form_comics = ComicsDetail(**form.model_dump())
+    form_comics = ComicsDetail(id=None, **form.model_dump())
     # Затем создаём новый экземпляр модели на основе провалидированых данных
     comics = Comics(**form_comics.model_dump())
     # Добавляем новый комикс в БД
@@ -110,7 +110,7 @@ async def update_comics(form: ComicsUpdateForm, comics_id: PositiveInt = Path(de
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такого комикса не существует")
     # Валидируем полученные данные
-    form_comics = ComicsDetail(**form.model_dump())
+    form_comics = ComicsDetail(id=comics_id, **form.model_dump())
     # Достаём ключи и их значения в провалидированных данных
     for name, value in form_comics:
         # Изменяем полученную по ID комикса

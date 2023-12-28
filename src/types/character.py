@@ -6,7 +6,6 @@ from sqlalchemy import select
 
 from pydantic import Field, model_validator, PositiveInt, field_validator
 
-
 from .base import DTO
 from .custom_types import AlphaStr
 
@@ -85,6 +84,13 @@ class CharacterAddForm(CharacterBasic):
                 raise ValueError("Такой персонаж уже сущетсвует")
             # В другом случае возвращаем валидные данные
             return name
+
+
+class CharacterUpdateForm(CharacterBasic):
+    """
+    Схема обновления конкретного персонажа
+    """
+    ...
 
 
 class CharacterDetail(CharacterBasic):

@@ -46,6 +46,7 @@ class ComicsAuthors(Base):
     """
     Промежуточная таблица между моделями комикса и автора
     """
+    id = Column(SMALLINT, primary_key=True)
     comics_id = Column(SMALLINT, ForeignKey("comics.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
                        index=True)
     author_id = Column(SMALLINT, ForeignKey("author.id", ondelete="NO ACTION"), primary_key=True, nullable=False,

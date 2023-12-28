@@ -103,14 +103,14 @@ async def update_author(form: AuthorUpdateForm, author_id: PositiveInt = Path(de
     :param session:
     :return:
     """
-    # Валидируем полученные данные
-    form_author = AuthorDetail(**form.model_dump())
     # Достаём автора по его ID
     author = session.scalar(select(Author).filter_by(id=author_id))
     # Если автор не найден
     if author is None:
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такого автора не существует")
+    # Валидируем полученные данные
+    form_author = AuthorDetail(id=author_id, **form.model_dump())
     # Достаём ключи и их значения в провалидированных данных
     for name, value in form_author:
         # Изменяем полученого по ID автора

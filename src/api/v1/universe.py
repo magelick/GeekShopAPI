@@ -109,7 +109,7 @@ async def update_universe(form: UniverseUpdateForm, universe_id: PositiveInt = P
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такой вселенной не существует")
     # Валидируем полученные данные
-    form_universe = UniverseDetail(**form.model_dump())
+    form_universe = UniverseDetail(id=universe_id, **form.model_dump())
     # Достаём ключи и их значения в провалидированных данных
     for name, value in form_universe:
         # Изменяем полученую по ID вселенную
