@@ -3,7 +3,6 @@ from typing import Self, Optional
 
 from sqlalchemy import select
 
-
 from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
 
@@ -77,6 +76,13 @@ class DeviceAddFrom(DeviceBasic):
                 raise ValueError("Такой девайс уже существует")
             # В другом случае возвращаем валидные значения
             return title
+
+
+class DeviceUpdateForm(DeviceBasic):
+    """
+    Схема обновления конкретного девайса
+    """
+    ...
 
 
 class DeviceDetail(DeviceBasic):
