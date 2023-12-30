@@ -83,6 +83,13 @@ class ToyAddForm(ToyBasic):
             return title
 
 
+class ToyUpdateForm(ToyBasic):
+    """
+    Схема обновления конкретной игрушки
+    """
+    ...
+
+
 class ToyDetail(ToyBasic):
     """
     Схема представления данных о конкретной игрушке

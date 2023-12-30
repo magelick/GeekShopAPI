@@ -14,7 +14,7 @@ from src.types.device import DeviceDetail, DeviceAddFrom, DeviceUpdateForm
 # Роутер девайсов
 router = APIRouter(
     prefix="/devices",
-    tags=["Девайсы персонажей"],
+    tags=["Девайсы персонажей и вселенных"],
     default_response_class=ORJSONResponse
 )
 
