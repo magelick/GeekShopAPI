@@ -33,7 +33,7 @@ class DeviceBasic(DTO):
     # Цена девайса
     price: Decimal = Field(
         default=...,
-        max_digits=4,
+        max_digits=5,
         decimal_places=2,
         title="Цена девайса",
         description="Цена конкретного девайса"

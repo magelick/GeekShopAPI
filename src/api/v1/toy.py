@@ -77,7 +77,7 @@ async def get_toy(toy_id: PositiveInt = Path(default=..., ge=1), session: Sessio
     :param session:
     :return:
     """
-    # Достаём конкретную игрушку
+    # Достаём конкретную игрушку по его ID
     toy = session.scalar(select(Toy).filter_by(id=toy_id))
     # Если игрушка не найдена
     if toy is None:

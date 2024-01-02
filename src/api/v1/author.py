@@ -32,9 +32,9 @@ async def get_list_authors(session: Session = get_db_session):
     :param session:
     :return:
     """
-    # Достаём все вселенные
+    # Достаём всех авторов
     authors = session.scalars(select(Author).order_by(Author.id))
-    # Возвращаем их, провалидировав через схему
+    # Возвращаем список всех авторов
     return [AuthorDetail.model_validate(obj=author, from_attributes=True) for author in authors]
 
 
@@ -57,9 +57,9 @@ async def add_new_author(form: AuthorAddForm, session: Session = get_db_session)
     author = Author(**form_author.model_dump())
     # Добавляем нового автора в БД
     session.add(author)
-    # Сохраняем изменения
+    # Сохраняем изменения в БД
     session.commit()
-    # Дописываем id, если это не обходимо
+    # Дописываем ID, если это не обходимо
     session.refresh(author)
     # Возвращаем нового автора в виде основной схемы представления автора
     return AuthorDetail.model_validate(obj=author, from_attributes=True)
@@ -78,7 +78,7 @@ async def get_author(author_id: PositiveInt = Path(default=..., ge=1), session: 
     :param session:
     :return:
     """
-    # Получение конкретного автора по его ID
+    # Достаём конкретного автора по его ID
     author = session.scalar(select(Author).filter_by(id=author_id))
     # Если автор не найден
     if author is None:
@@ -103,7 +103,7 @@ async def update_author(form: AuthorUpdateForm, author_id: PositiveInt = Path(de
     :param session:
     :return:
     """
-    # Достаём автора по его ID
+    # Достаём конкретного автора по его ID
     author = session.scalar(select(Author).filter_by(id=author_id))
     # Если автор не найден
     if author is None:
@@ -117,6 +117,8 @@ async def update_author(form: AuthorUpdateForm, author_id: PositiveInt = Path(de
         setattr(author, name, value)
     # Сохраняем изменения в БД
     session.commit()
+    # Дописываем ID, если это необходимо
+    session.refresh(author)
     # Возвращаем изменённого автора в виде основной схемы представления автора
     return AuthorDetail.model_validate(obj=author, from_attributes=True)
 
@@ -133,7 +135,7 @@ async def delete_author(author_id: PositiveInt = Path(default=..., ge=1), sessio
     :param session:
     :return:
     """
-    # Достаём автора по его ID
+    # Достаём конкретного автора по его ID
     author = session.scalar(select(Author).filter_by(id=author_id))
     # Удаляем выбранного автора
     session.delete(author)
@@ -149,14 +151,15 @@ async def delete_author(author_id: PositiveInt = Path(default=..., ge=1), sessio
     response_model=List[CharacterDetail],
     name="Получение списка всех персонажей конкретного автора"
 )
-async def get_list_characters_of_author(author_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_list_characters_of_author(author_id: PositiveInt = Path(default=..., ge=1),
+                                        session: Session = get_db_session):
     """
     Получение списка персонажей конкретного автора
     :param author_id:
     :param session:
     :return:
     """
-    # Достаём автора по его ID
+    # Достаём конкретного автора по его ID
     author = session.scalar(select(Author).filter_by(id=author_id))
     # Если автор не найден
     if author is None:
@@ -172,14 +175,15 @@ async def get_list_characters_of_author(author_id: PositiveInt = Path(default=..
     response_model=List[ComicsDetail],
     name="Получение всех комиксов конкретного автора"
 )
-async def get_list_comics_of_author(author_id: PositiveInt = Path(default=...,ge=1), session: Session = get_db_session):
+async def get_list_comics_of_author(author_id: PositiveInt = Path(default=..., ge=1),
+                                    session: Session = get_db_session):
     """
     Получение списка комиксов конкретного автора
     :param author_id:
     :param session:
     :return:
     """
-    # Достаём автора по его ID
+    # Достаём конкретного автора по его ID
     author = session.scalar(select(Author).filter_by(id=author_id))
     # Если автор не найден
     if author is None:

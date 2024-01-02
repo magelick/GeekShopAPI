@@ -118,7 +118,7 @@ class ToyDetail(ToyBasic):
         # Если слаг не передан
         if self.slug is None:
             # Генерируем слаг на основании имени, весе и цене конкретной игрушки
-            self.slug = slugify(f"{self.title}-{self.weight}-{self.price}")
+            self.slug = slugify(f"{self.title}-{self.type_of_toy}-{self.price}")
 
         # В другом случае возвращаем валидные данные
         return Self

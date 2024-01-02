@@ -34,7 +34,7 @@ async def get_list_comics(session: Session = get_db_session):
     """
     # Достаём все комиксы
     all_comics = session.scalars(select(Comics).order_by(Comics.id))
-    # Возвращаем их, провалидировав через схему
+    # Возвращаем список всех комиксов
     return [ComicsDetail.model_validate(obj=comics, from_attributes=True) for comics in all_comics]
 
 
@@ -44,22 +44,23 @@ async def get_list_comics(session: Session = get_db_session):
     response_model=ComicsDetail,
     name="Добавление нового комикса"
 )
-async def add_new_comics(id: PositiveInt, form: ComicsAddForm, session: Session = get_db_session):
+async def add_new_comics(form: ComicsAddForm, session: Session = get_db_session):
     """
     Добавление нового комикса
     :param form:
     :param session:
     :return:
     """
-    # Создаём новый комикс,валидировав через основную схему представления комиксов
-    form_comics = ComicsDetail(id=None, **form.model_dump())
+    # Создаём новый комикс, валидировав через основную схему представления комиксов
+    form_comics = ComicsDetail(**form.model_dump())
+    print(form_comics)
     # Затем создаём новый экземпляр модели на основе провалидированых данных
     comics = Comics(**form_comics.model_dump())
     # Добавляем новый комикс в БД
     session.add(comics)
     # Сохраняем изменения в БД
     session.commit()
-    # Дописываем ID, если это не обходимо
+    # Дописываем ID, если это необходимо
     session.refresh(comics)
     # Возвращаем новую вселенную в виде основной схемы представления вселенной
     return ComicsDetail.model_validate(obj=comics, from_attributes=True)
@@ -113,7 +114,7 @@ async def update_comics(form: ComicsUpdateForm, comics_id: PositiveInt = Path(de
     form_comics = ComicsDetail(id=comics_id, **form.model_dump())
     # Достаём ключи и их значения в провалидированных данных
     for name, value in form_comics:
-        # Изменяем полученную по ID комикса
+        # Изменяем полученный по ID комикса
         setattr(comics, name, value)
     # Сохраняем изменения в БД
     session.commit()
@@ -179,7 +180,8 @@ async def get_list_authors_of_comics(comics_id: PositiveInt = Path(default=..., 
     response_model=List[CharacterDetail],
     name="Получение списка персонажей конкретного комикса"
 )
-async def get_list_characters_of_comics(comics_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_list_characters_of_comics(comics_id: PositiveInt = Path(default=..., ge=1),
+                                        session: Session = get_db_session):
     """
     Получение списка персонажей конкретного комикса
     :param comics_id:

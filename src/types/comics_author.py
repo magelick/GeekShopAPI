@@ -4,7 +4,7 @@ from pydantic import Field, PositiveInt
 from .base import DTO
 
 
-class ComicsAuthorBasic(DTO):
+class ComicsAuthorsBasic(DTO):
     """
     Базовая схема представления связанной модели Комиска и Автора
     """
@@ -20,18 +20,25 @@ class ComicsAuthorBasic(DTO):
     )
 
 
-class ComicsAuthorAddForm(ComicsAuthorBasic):
+class ComicsAuthorsAddForm(ComicsAuthorsBasic):
     """
     Схема добавления нового экземпляра связанной модели Комикса и Автора
     """
     ...
 
 
-class ComicsAuthorDetail(ComicsAuthorBasic):
+class ComicsAuthorsUpdateForm(ComicsAuthorsBasic):
+    """
+
+    """
+    ...
+
+
+class ComicsAuthorsDetail(ComicsAuthorsBasic):
     """
     Схема представления экземпляра связанной модели Комикса и Автора
     """
-    id: PositiveInt = Field(
+    id: Optional[PositiveInt] = Field(
         default=None,
         title="ID экземпляра",
         description="ID конкретного комикса"

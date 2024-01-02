@@ -33,7 +33,7 @@ async def get_list_universes(session: Session = get_db_session):
     """
     # Достаём все вселенные
     universes = session.scalars(select(Universe).order_by(Universe.id))
-    # Возвращаем их, провалидировав через схемки
+    # Возвращаем список всех вселенных
     return [UniverseDetail.model_validate(obj=universe, from_attributes=True) for universe in universes]
 
 
@@ -56,9 +56,9 @@ async def add_new_universe(form: UniverseAddForm, session: Session = get_db_sess
     universe = Universe(**form_universe.model_dump())
     # Добавляем новую вселеную в БД
     session.add(universe)
-    # Сохраняем изменения
+    # Сохраняем изменения в БД
     session.commit()
-    # Дописываем id, если это не обходимо
+    # Дописываем id, если это необходимо
     session.refresh(universe)
     # Возвращаем новую вселенную в виде основной схемы представления вселенной
     return UniverseDetail.model_validate(obj=universe, from_attributes=True)
@@ -154,7 +154,8 @@ async def delete_universe(universe_id: PositiveInt = Path(default=..., ge=1), se
     response_model=List[CharacterDetail],
     name="Получение всех персонажей конкретной вселенной"
 )
-async def get_list_character_of_universe(universe_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_list_character_of_universe(universe_id: PositiveInt = Path(default=..., ge=1),
+                                         session: Session = get_db_session):
     """
     Получение списка персонажей конкретной вселенной
     :param universe_id:
@@ -177,7 +178,8 @@ async def get_list_character_of_universe(universe_id: PositiveInt = Path(default
     response_model=List[DeviceDetail],
     name="Получение всех девайсов конкретной вселенной"
 )
-async def get_list_devices_of_universe(universe_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_list_devices_of_universe(universe_id: PositiveInt = Path(default=..., ge=1),
+                                       session: Session = get_db_session):
     """
     Получение всех девайсов конкретной вселенной
     :param universe_id:
@@ -200,7 +202,8 @@ async def get_list_devices_of_universe(universe_id: PositiveInt = Path(default=.
     response_model=List[ToyDetail],
     name="Получение всех игрушек конкретной вселенной"
 )
-async def get_list_toys_of_universe(universe_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
+async def get_list_toys_of_universe(universe_id: PositiveInt = Path(default=..., ge=1),
+                                    session: Session = get_db_session):
     """
     Получение списка игрущек конкретной вселенной
     :param universe_id:

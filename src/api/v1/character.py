@@ -60,9 +60,9 @@ async def add_new_character(form: CharacterAddForm, session: Session = get_db_se
     character = Character(**form_character.model_dump())
     # Добавляем нового персонажа в БД
     session.add(character)
-    # Сохраняем изменения
+    # Сохраняем изменения в БД
     session.commit()
-    # Дописываем id, если это не обходимо
+    # Дописываем ID, если это не обходимо
     session.refresh(character)
     # Возвращаем нового персонажа в виде основной схемы представления персонажа
     return CharacterDetail.model_validate(obj=character, from_attributes=True)
@@ -81,7 +81,7 @@ async def get_character(character_id: PositiveInt = Path(default=..., ge=1), ses
     :param session:
     :return:
     """
-    # Достаём кокнертного персонажа
+    # Достаём конкретного персонажа по его ID
     character = session.scalar(select(Character).filter_by(id=character_id))
     # Если персонаж не найден
     if character is None:
@@ -106,7 +106,7 @@ async def update_character(form: CharacterUpdateForm, character_id: PositiveInt 
     :param session:
     :return:
     """
-    # Достаём кокнертного персонажа
+    # Достаём конкретного персонажа по его ID
     character = session.scalar(select(Character).filter_by(id=character_id))
     # Если персонаж не найден
     if character is None:
@@ -138,7 +138,7 @@ async def delete_character(character_id: PositiveInt = Path(default=..., ge=1), 
     :param session:
     :return:
     """
-    # Достаём кокнертного персонажа
+    # Достаём конкретного персонажа по его ID
     character = session.scalar(select(Character).filter_by(id=character_id))
     # Если персонаж не найден
     if character is None:
@@ -166,7 +166,7 @@ async def get_universe_of_character(character_id: PositiveInt = Path(default=...
     :param session:
     :return:
     """
-    # Достаём кокнертного персонажа
+    # Достаём конкретного персонажа по его ID
     character = session.scalar(select(Character).filter_by(id=character_id))
     # Если персонаж не найден
     if character is None:
@@ -190,7 +190,7 @@ async def get_author_of_character(character_id: PositiveInt = Path(default=..., 
     :param session:
     :return:
     """
-    # Достаём кокнертного персонажа
+    # Достаём конкретного персонажа по его ID
     character = session.scalar(select(Character).filter_by(id=character_id))
     # Если персонаж не найден
     if character is None:
@@ -209,12 +209,12 @@ async def get_author_of_character(character_id: PositiveInt = Path(default=..., 
 async def get_list_devices_of_character(character_id: PositiveInt = Path(default=..., ge=1),
                                         session: Session = get_db_session):
     """
-
+    Получение списка девайсов кокнертного персонажа
     :param character_id:
     :param session:
     :return:
     """
-    # Достаём кокнертного персонажа
+    # Достаём конкретного персонажа по его ID
     character = session.scalar(select(Character).filter_by(id=character_id))
     # Если персонаж не найден
     if character is None:
@@ -238,7 +238,7 @@ async def get_list_sweets_of_character(character_id: PositiveInt = Path(default=
     :param session:
     :return:
     """
-    # Достаём кокнертного персонажа
+    # Достаём конкретного персонажа по его ID
     character = session.scalar(select(Character).filter_by(id=character_id))
     # Если персонаж не найден
     if character is None:
@@ -249,7 +249,7 @@ async def get_list_sweets_of_character(character_id: PositiveInt = Path(default=
 
 
 @router.get(
-    path="/{universe_id}/toys/",
+    path="/{character_id}/toys/",
     status_code=status.HTTP_200_OK,
     response_model=List[ToyDetail],
     name="Получение списка игрушек конркетного персонажа"
@@ -262,7 +262,7 @@ async def get_list_toys_of_character(character_id: PositiveInt = Path(default=..
     :param session:
     :return:
     """
-    # Достаём кокнертного персонажа
+    # Достаём конкретного персонажа по его ID
     character = session.scalar(select(Character).filter_by(id=character_id))
     # Если персонаж не найден
     if character is None:

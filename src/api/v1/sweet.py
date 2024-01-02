@@ -56,7 +56,7 @@ async def add_new_sweet(form: SweetAddForm, session: Session = get_db_session):
     sweet = Sweet(**form_sweet.model_dump())
     # Добавляем новой сладости в БД
     session.add(sweet)
-    # Сохраняем изменения
+    # Сохраняем изменения в БД
     session.commit()
     # Дописываем id, если это не обходимо
     session.refresh(sweet)
@@ -77,7 +77,7 @@ async def get_sweet(sweet_id: PositiveInt = Path(default=..., ge=1), session: Se
     :param session:
     :return:
     """
-    # Достаём конкретную сладость
+    # Достаём конкретную сладость по его ID
     sweet = session.scalar(select(Sweet).filter_by(id=sweet_id))
     # Если сладость не найдена
     if sweet is None:
@@ -112,7 +112,7 @@ async def update_sweet(form: SweetUpdateForm, sweet_id: PositiveInt = Path(defau
     form_sweet = SweetDetail(**form.model_dump())
     # Достаём ключи и их значения в провалидированных данных
     for name, value in form_sweet:
-        # Изменяем полученныю по ID сладость
+        # Изменяем полученную по ID сладость
         setattr(sweet, name, value)
     # Сохраняем изменения в БД
     session.commit()

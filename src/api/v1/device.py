@@ -51,14 +51,14 @@ async def add_new_device(form: DeviceAddFrom, session: Session = get_db_session)
     :return:
     """
     # Создаём новый девайс, валидировав через основную схему представления девайса
-    form_devices = DeviceDetail(**form.model_dump())
+    form_device = DeviceDetail(**form.model_dump())
     # Затем создаём новый экземпляр модели на основе провалидированых данных
-    device = Device(**form_devices.model_dump())
+    device = Device(**form_device.model_dump())
     # Добавляем новый девайс в БД
     session.add(device)
-    # Сохраняем изменения
+    # Сохраняем изменения в БД
     session.commit()
-    # Дописываем id, если это не обходимо
+    # Дописываем ID, если это необходимо
     session.refresh(device)
     # Возвращаем новый девайс в виде основной схемы представления девайса
     return DeviceDetail.model_validate(obj=device, from_attributes=True)
@@ -77,7 +77,7 @@ async def get_device(device_id: PositiveInt = Path(default=..., ge=1), session: 
     :param session:
     :return:
     """
-    # Достаём кокнертный девайс
+    # Достаём кокнертный девайс по его ID
     device = session.scalar(select(Device).filter_by(id=device_id))
     # Если девайс не найден
     if device is None:
@@ -93,7 +93,8 @@ async def get_device(device_id: PositiveInt = Path(default=..., ge=1), session: 
     response_model=DeviceDetail,
     name="Обновление конкретного девайса"
 )
-async def update_device(form: DeviceUpdateForm, device_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
+async def update_device(form: DeviceUpdateForm, device_id: PositiveInt = Path(default=..., ge=1),
+                        session: Session = get_db_session):
     """
     Обновление конкретного девайса
     :param form:
@@ -101,7 +102,7 @@ async def update_device(form: DeviceUpdateForm, device_id: PositiveInt = Path(de
     :param session:
     :return:
     """
-    # Достаём кокнертный девайс
+    # Достаём кокнертный девайс по его ID
     device = session.scalar(select(Device).filter_by(id=device_id))
     # Если девайс не найден
     if device is None:
@@ -133,7 +134,7 @@ async def delete_device(device_id: PositiveInt = Path(default=..., ge=1), sessio
     :param session:
     :return:
     """
-    # Достаём кокнертный девайс
+    # Достаём кокнертный девайс по его ID
     device = session.scalar(select(Device).filter_by(id=device_id))
     # Если девайс не найден
     if device is None:
@@ -160,7 +161,7 @@ async def get_universe_of_device(device_id: PositiveInt = Path(default=..., ge=1
     :param session:
     :return:
     """
-    # Достаём кокнертный девайс
+    # Достаём кокнертный девайс по его ID
     device = session.scalar(select(Device).filter_by(id=device_id))
     # Если девайс не найден
     if device is None:
@@ -183,7 +184,7 @@ async def get_character_of_device(device_id: PositiveInt = Path(default=..., ge=
     :param session:
     :return:
     """
-    # Достаём кокнертный девайс
+    # Достаём кокнертный девайс по его ID
     device = session.scalar(select(Device).filter_by(id=device_id))
     # Если девайс не найден
     if device is None:
