@@ -7,7 +7,7 @@ from sqlalchemy import select
 from pydantic import Field, model_validator, PositiveInt, field_validator
 
 from .base import DTO
-from .custom_types import AlphaStr
+from .custom_types import AlphaStr, TitleStr
 
 
 class CharacterBasic(DTO):
@@ -15,7 +15,7 @@ class CharacterBasic(DTO):
     Базавая схема представления данных конкретного персонажа
     """
     # Имя персонада
-    name: AlphaStr = Field(
+    name: TitleStr = Field(
         default=...,
         min_length=2,
         max_length=64,

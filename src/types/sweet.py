@@ -6,7 +6,7 @@ from slugify import slugify
 from sqlalchemy import select
 
 from .base import DTO
-from .custom_types import AlphaStr
+from .custom_types import AlphaStr, TitleStr
 
 
 class SweetBasic(DTO):
@@ -14,12 +14,13 @@ class SweetBasic(DTO):
     Базовая схема представления кокнретной сладости
     """
     # Название сладости
-    title: AlphaStr = Field(
+    title: TitleStr = Field(
         default=...,
         min_length=4,
         max_length=128,
         title="Название сладости",
-        description="Название конкретной сладости"
+        description="Название конкретной сладости",
+        examples=["Желатин Человека-Паука, Конфета Железного Человека, Напиток Джокера"]
     )
     # Цена сладости
     price: Decimal = Field(
@@ -27,19 +28,22 @@ class SweetBasic(DTO):
         max_digits=4,
         decimal_places=2,
         title="Цена сладости",
-        description="Цена конкретной сладости"
+        description="Цена конкретной сладости",
+        examples=["20.99, 19,99, 99.99"]
     )
     # Вес сладости
     weight: PositiveInt = Field(
         default=...,
         title="Вес сладости",
-        description="Вес конкретной сладости"
+        description="Вес конкретной сладости",
+        examples=["1, 23, 456, 7890"]
     )
     # Персонаж сладости
-    character: PositiveInt = Field(
+    character_id: PositiveInt = Field(
         default=...,
         title="Персонаж сладости",
-        description="Персонаж, к которому относиться конкретная сладость"
+        description="Персонаж, к которому относиться конкретная сладость",
+        examples=["1, 2, 3, 4"]
     )
 
 

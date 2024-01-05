@@ -168,7 +168,7 @@ async def get_universe_of_device(device_id: PositiveInt = Path(default=..., ge=1
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такого девайса не существует")
     # Возвращаем конкретную вселенную, к которой относиться конкретный девайс
-    return UniverseDetail.model_validate(obj=device.unverse, from_attributes=True)
+    return UniverseDetail.model_validate(obj=device.character.universe, from_attributes=True)
 
 
 @router.get(

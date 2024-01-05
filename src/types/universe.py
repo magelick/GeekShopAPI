@@ -6,7 +6,7 @@ from slugify import slugify
 from sqlalchemy import select
 
 from .base import DTO
-from .custom_types import AlphaStr
+from .custom_types import AlphaStr, TitleStr
 
 
 class UniverseBasic(DTO):
@@ -14,20 +14,20 @@ class UniverseBasic(DTO):
     Базовая схема конкретной вселенной персонажей
     """
     # Название вселенной
-    title: AlphaStr = Field(
+    title: TitleStr = Field(
         default=...,
         min_length=2,
         max_length=64,
         title="Название вселенной",
         description="Название вселенной персонажей",
-        examples=["Marvel", "DC"]
+        examples=["Marvel, DC"]
     )
     # Дата создания
     date_created: datetime.date = Field(
         default=...,
         title="Дата создания",
         description="Дата создания конкретной вселенной",
-        examples=["1999-99-99", "2020-12-31", "1234-45-67"]
+        examples=["1929-12-12, 1234-12-12"]
     )
 
 

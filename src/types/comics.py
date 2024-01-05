@@ -8,7 +8,7 @@ from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
 
 from .base import DTO
-from .custom_types import AlphaStr
+from .custom_types import AlphaStr, TitleStr
 
 
 class ComicsBasic(DTO):
@@ -16,24 +16,27 @@ class ComicsBasic(DTO):
     Базовая схема конкретного комикса
     """
     # Название комикса
-    title: AlphaStr = Field(
+    title: TitleStr = Field(
         default=...,
         min_length=4,
         max_length=128,
         title="Название комикса",
-        description="Название конкретного комикса"
+        description="Название конкретного комикса",
+        examples=["Удивительный Человек-Паук, Железный Человек, Бэтмен"]
     )
     # Том комикса
     volume: PositiveInt = Field(
         default=...,
         title="Том комикса",
-        description="Том конкретного комикса"
+        description="Том конкретного комикса",
+        examples=[1, 2, 3]
     )
     # Дата создания комикса
     date_created: datetime.date = Field(
         default=...,
         title="Дата создания комикса",
         description="Дата создания конкретного комикса",
+        examples=["2020-12-31, 1234-12-12"]
     )
     # Цена комикса
     price: Decimal = Field(
@@ -41,7 +44,8 @@ class ComicsBasic(DTO):
         max_digits=5,
         decimal_places=2,
         title="Цена комикса",
-        description="Цена конкретного комикса"
+        description="Цена конкретного комикса",
+        examples=["20.99, 19,99, 99.99"]
     )
     # Страна выпуска комикса
     country: AlphaStr = Field(
@@ -50,7 +54,7 @@ class ComicsBasic(DTO):
         max_length=64,
         title="Страна выпуска комикса",
         description="Страна выпуска конкретного комикса",
-        examples=["Америка", "Германия", "Норвегия"]
+        examples=["Америка, Норвегия, Германия"]
     )
 
 

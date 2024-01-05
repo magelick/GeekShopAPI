@@ -154,8 +154,6 @@ class Device(Base):
     title = Column(VARCHAR(length=128), nullable=False, unique=True)
     type_of_device = Column(VARCHAR(length=64), nullable=False)
     price = Column(INT, nullable=False)
-    universe_id = Column(SMALLINT, ForeignKey(column="universe.id", ondelete="CASCADE"), nullable=False, index=True)
-    universe = relationship(argument="Universe", back_populates="devices")
     character_id = Column(SMALLINT, ForeignKey(column="character.id", ondelete="CASCADE"), nullable=False, index=True)
     character = relationship(argument="Character", back_populates="devices")
 
@@ -200,7 +198,5 @@ class Toy(Base):
     age = Column(INT, nullable=False)
     type_of_toy = Column(VARCHAR(length=64), nullable=False)
     price = Column(INT, nullable=False)
-    universe_id = Column(SMALLINT, ForeignKey(column="universe.id", ondelete="CASCADE"), nullable=False, index=True)
-    universe = relationship(argument="Universe", back_populates="toys")
     character_id = Column(SMALLINT, ForeignKey(column="character.id", ondelete="CASCADE"), nullable=False, index=True)
     character = relationship(argument="Character", back_populates="toys")

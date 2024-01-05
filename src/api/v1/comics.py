@@ -53,7 +53,6 @@ async def add_new_comics(form: ComicsAddForm, session: Session = get_db_session)
     """
     # Создаём новый комикс, валидировав через основную схему представления комиксов
     form_comics = ComicsDetail(**form.model_dump())
-    print(form_comics)
     # Затем создаём новый экземпляр модели на основе провалидированых данных
     comics = Comics(**form_comics.model_dump())
     # Добавляем новый комикс в БД

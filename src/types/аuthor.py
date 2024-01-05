@@ -20,7 +20,7 @@ class AuthorBasic(DTO):
         max_length=64,
         title="Имя автора",
         description="Имя конкретного автора",
-        examples=["Стэн", "Джэк"]
+        examples=["Стэн, Джек"]
     )
     # Фамилия автора
     surname: AlphaStr = Field(
@@ -29,14 +29,14 @@ class AuthorBasic(DTO):
         max_length=64,
         title="Фамилия автора",
         description="Фамилия конкретного автора",
-        examples=["Ли", "Кирби"]
+        examples=["Ли, Кирби"]
     )
     # Дата рождения автора
     birthday: datetime.date = Field(
         default=...,
         title="Дата рождения автора",
         description="Дата рождения конкретного автора",
-        examples=["1999-99-99", "2020-12-31", "1234-45-67"]
+        examples=["2020-12-31, 1234-12-12"]
     )
 
 

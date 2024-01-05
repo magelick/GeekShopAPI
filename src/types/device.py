@@ -7,7 +7,7 @@ from pydantic import Field, PositiveInt, model_validator, field_validator
 from slugify import slugify
 
 from .base import DTO
-from .custom_types import AlphaStr
+from .custom_types import AlphaStr, TitleStr
 
 
 class DeviceBasic(DTO):
@@ -15,20 +15,22 @@ class DeviceBasic(DTO):
     Базовая схема представления кокнретного девайса
     """
     # Название девайса
-    title: AlphaStr = Field(
+    title: TitleStr = Field(
         default=...,
         min_length=4,
         max_length=128,
         title="Название девайса",
-        description="Название конкретного девайса"
+        description="Название конкретного девайса",
+        examples=["Джостик Человека-Паука, Шлем Железного Человека, Маска Джокера"]
     )
     # Тип девайса
-    type_of_device: AlphaStr = Field(
+    type_of_device: TitleStr = Field(
         default=...,
         min_length=4,
         max_length=64,
         title="Тип девайса",
-        description="Тип конкретного девайса"
+        description="Тип конкретного девайса",
+        examples=["Контроллер, Манипулятор, Устройство ввода"]
     )
     # Цена девайса
     price: Decimal = Field(
@@ -36,19 +38,15 @@ class DeviceBasic(DTO):
         max_digits=5,
         decimal_places=2,
         title="Цена девайса",
-        description="Цена конкретного девайса"
+        description="Цена конкретного девайса",
+        examples=["20.99, 19,99, 99.99"]
     )
     # Персонаж девайса
-    character: PositiveInt = Field(
+    character_id: PositiveInt = Field(
         default=...,
         title="Персонаж девайса",
-        description="Персонаж, к которому относится данный девайс"
-    )
-    # Вселенная девайса
-    universe: PositiveInt = Field(
-        default=...,
-        title="Вселенная девайса",
-        description="Вселенная, к которой относиться данный девайс"
+        description="Персонаж, к которому относится данный девайс",
+        examples=["1, 2, 3, 4"]
     )
 
 

@@ -6,7 +6,7 @@ from slugify import slugify
 from sqlalchemy import select
 
 from .base import DTO
-from .custom_types import AlphaStr
+from .custom_types import AlphaStr, TitleStr, AgeInt
 
 
 class ToyBasic(DTO):
@@ -14,18 +14,20 @@ class ToyBasic(DTO):
     Базовая схема предсатвления конкретной игрушки
     """
     # Название игрушки
-    title: AlphaStr = Field(
+    title: TitleStr = Field(
         default=...,
         min_length=4,
         max_length=128,
         title="Название игрушки",
-        description="Название конкретной игрушки"
+        description="Название конкретной игрушки",
+        examples=["Робот Человека-Паука, Кунай Наруто, Меч Блэйда"]
     )
     # Возраст для игрушки
-    age: PositiveInt = Field(
+    age: AgeInt = Field(
         default=...,
         title="Возраст для игрушки",
-        description="Возраст для конкретной игрушки"
+        description="Возраст для конкретной игрушки",
+        examples=["6+, 12+, 18+, 21+"]
     )
     # Тип игрушки
     type_of_toy: AlphaStr = Field(
@@ -33,7 +35,8 @@ class ToyBasic(DTO):
         min_length=4,
         max_length=64,
         title="Тип игрушки",
-        description="Тип кокнретной игрушки"
+        description="Тип кокнретной игрушки",
+        examples=["Машинка, Конструктор, Пазл"]
     )
     # Цена игрушки
     price: Decimal = Field(
@@ -41,19 +44,15 @@ class ToyBasic(DTO):
         max_digits=4,
         decimal_places=2,
         title="Цена игрушки",
-        description="Цена конкретной игрушки"
+        description="Цена конкретной игрушки",
+        examples=["20.99, 19,99, 99.99"]
     )
     # Персонаж игрушки
-    character: PositiveInt = Field(
+    character_id: PositiveInt = Field(
         default=...,
         title="Персонаж игрушки",
-        description="Персонаж, к которому относится конкретная игрушка"
-    )
-    # Вселенная игрушки
-    universe: PositiveInt = Field(
-        default=...,
-        title="Вселенная игрушки",
-        description="ВСеленная, к которой относится конкретная игрушка"
+        description="Персонаж, к которому относится конкретная игрушка",
+        examples=["1, 2, 3, 4"]
     )
 
 

@@ -168,7 +168,7 @@ async def get_universe_of_toy(toy_id: PositiveInt = Path(default=..., ge=1), ses
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такой игрушки не сущетсвует")
     # Возвращаем конкретную вселенную, к которой относиться конкретная игрушка
-    return UniverseDetail.model_validate(obj=toy.universe, from_attributes=True)
+    return UniverseDetail.model_validate(obj=toy.character.universe, from_attributes=True)
 
 
 @router.get(

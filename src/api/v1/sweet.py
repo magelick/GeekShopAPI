@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from src.database.models import Sweet
 from src.dependencies import get_db_session
+from src.types import UniverseDetail
 from src.types.sweet import SweetDetail, SweetAddForm, SweetUpdateForm
 from src.types.character import CharacterDetail
 
@@ -169,3 +170,28 @@ async def get_character_of_sweet(sweet_id: PositiveInt = Path(default=..., ge=1)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такой сладости не существует")
     # Возвращаем конкретного персонажа, к которому относиться конкретная сладость
     return CharacterDetail.model_validate(obj=sweet.character, from_attributes=True)
+
+
+@router.get(
+    path="/{sweet_id}/universe/",
+    status_code=status.HTTP_200_OK,
+    response_model=CharacterDetail,
+    name="Получение вселенной конкретной сладости"
+)
+async def get_universe_of_sweet(sweet_id: PositiveInt = Path(default=..., ge=1), session: Session = get_db_session):
+    """
+    Получение вселенной конкретной сладости
+    :param sweet_id:
+    :param session:
+    :return:
+    """
+    # Достаём конкретную сладость
+    sweet = session.scalar(select(Sweet).filter_by(id=sweet_id))
+    # Если сладость не найдена
+    if sweet is None:
+        # Выдаём ошибку
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такой сладости не существует")
+    # Возвращаем конкретную вселенную, к которой относиться конкретная сладость
+    return UniverseDetail.model_validate(obj=sweet.character.universe, from_attributes=True)
+
+
