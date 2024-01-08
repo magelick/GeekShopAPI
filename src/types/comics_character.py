@@ -1,10 +1,10 @@
-from typing import Optional
+from typing import List, Optional, Self
 
-from pydantic import Field, PositiveInt
+from pydantic import Field, PositiveInt, model_validator
 from .base import DTO
 
 
-class ComicsAuthorsBasic(DTO):
+class ComicsCharacterBasic(DTO):
     """
     Базовая схема представления связанной модели Комиска и Автора
     """
@@ -13,28 +13,28 @@ class ComicsAuthorsBasic(DTO):
         title="ID комиксов",
         examples=[1]
     )
-    author_id: PositiveInt = Field(
+    character_id: PositiveInt = Field(
         default=...,
-        title="ID авторов",
+        title="ID персонажей",
         examples=[1]
     )
 
 
-class ComicsAuthorsAddForm(ComicsAuthorsBasic):
+class ComicsCharacterAddForm(ComicsCharacterBasic):
     """
     Схема добавления нового экземпляра связанной модели Комикса и Автора
     """
     ...
 
 
-class ComicsAuthorsUpdateForm(ComicsAuthorsBasic):
+class ComicsCharacterUpdateForm(ComicsCharacterBasic):
     """
 
     """
     ...
 
 
-class ComicsAuthorsDetail(ComicsAuthorsBasic):
+class ComicsCharacterDetail(ComicsCharacterBasic):
     """
     Схема представления экземпляра связанной модели Комикса и Автора
     """

@@ -102,7 +102,7 @@ async def update_comics_author(form: ComicsAuthorsUpdateForm, comics_authors_id:
     """
     # Достаём конкретную связь между комиксами и авторами по её ID
     comics_authors = session.scalar(select(ComicsAuthors).filter_by(id=comics_authors_id))
-    # Если связь не найден
+    # Если связь не найдена
     if comics_authors is None:
         # Выдаём ошибку
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Такой связи не существует")
@@ -110,7 +110,7 @@ async def update_comics_author(form: ComicsAuthorsUpdateForm, comics_authors_id:
     form_comics_authors = ComicsAuthorsDetail(id=comics_authors_id, **form.model_dump())
     # Достаём ключи и их значения в провалидированных данных
     for name, value in form_comics_authors:
-        # Изменяем полученого по ID автора
+        # Изменяем полученую по ID связь
         setattr(comics_authors, name, value)
     # Сохраняем изменения в БД
     session.commit()

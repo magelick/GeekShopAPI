@@ -35,8 +35,6 @@ class Universe(Base):
     title = Column(VARCHAR(length=64), nullable=False, unique=True)
     date_created = Column(TIMESTAMP, nullable=False, unique=True)
     characters = relationship(argument="Character", back_populates="universe")
-    devices = relationship(argument="Device", back_populates="universe")
-    toys = relationship(argument="Toy", back_populates="universe")
 
     def __repr__(self):
         return f"{self.title}"
@@ -46,7 +44,7 @@ class ComicsAuthors(Base):
     """
     Промежуточная таблица между моделями комикса и автора
     """
-    id = Column(SMALLINT, primary_key=True)
+    id = Column(SMALLINT, primary_key=True, nullable=False)
     comics_id = Column(SMALLINT, ForeignKey("comics.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
                        index=True)
     author_id = Column(SMALLINT, ForeignKey("author.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
@@ -57,10 +55,11 @@ class ComicsCharacters(Base):
     """
     Промежуточная таблица между моделями комикса и персонажа
     """
+    id = Column(SMALLINT, primary_key=True, nullable=False)
     comics_id = Column(SMALLINT, ForeignKey("comics.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
                        index=True)
     character_id = Column(SMALLINT, ForeignKey("character.id", ondelete="NO ACTION"), primary_key=True, nullable=False,
-                       index=True)
+                          index=True)
 
 
 class Author(Base):
